@@ -1,25 +1,35 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import { workers } from './components/const';
+import TableWorker from './components/TableWorker';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const names = ['Yan', 'Anastasia', 'Artem'];
+const Welcome = () => <h1>Hello{names.map((n, index) => (', ' + n))}!</h1>;
+
+export default class App extends React.PureComponent {
+
+  state = {
+    message: '',
+    workers: workers
+  }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(response => response.json())
+      .then(json => this.setState({ workers: json }))
+  }
+
+  handleClick(message) {
+    this.setState({ message })
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <Welcome />
+        {this.state.message && "Мы подняли состояние в родительский компонент. Ура!"}
+        <TableWorker workers={this.state.workers} onWorkersClick={(message) => { this.handleClick(message) }} />
+      </div>
+    );
+  }
 }
-
-export default App;
